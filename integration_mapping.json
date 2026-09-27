@@ -1,0 +1,29 @@
+{
+  "flow_name": "CoreBanking_To_Salesforce_Refund_Sync",
+  "description": "Simulates an IBM App Connect flow that reads validated transactions from the core COBOL system and creates/updates Salesforce records.",
+  "source": "validated-output.dat (COBOL VALIDATE-TRANSACTION output)",
+  "target": "Salesforce",
+  "field_mappings": [
+    {
+      "source_field": "TRAN-ID",
+      "target_object": "Refund__c",
+      "target_field": "Core_Transaction_Id__c",
+      "type": "string"
+    },
+    {
+      "source_field": "TRAN-AMT",
+      "target_object": "Refund__c",
+      "target_field": "Refund_Amount__c",
+      "type": "currency",
+      "business_note": "SIGN CONVENTION: a NEGATIVE amount from the core system is how a refund (money going out to the customer) is represented. Salesforce's 'Process Refund' flow only fires when Refund_Amount__c is negative. If the core system starts rejecting negative amounts, no Refund__c record is ever created, and the customer-facing refund never happens -- with no error visible on the Salesforce side, because from Salesforce's point of view, nothing ever arrived."
+    },
+    {
+      "source_field": "TRAN-TYPE",
+      "target_object": "Refund__c",
+      "target_field": "RecordTypeId",
+      "type": "picklist",
+      "mapping_rule": "TRAN-TYPE = 'REFUND' -> RecordType = 'Customer Refund'"
+    }
+  ],
+  "trigger_condition": "Only records with STATUS = 'VALID' in validated-output.dat are sent to Salesforce. A record with STATUS = 'REJECTED' never reaches this mapping at all -- this is exactly why the after-fix change is invisible from the Salesforce side."
+}

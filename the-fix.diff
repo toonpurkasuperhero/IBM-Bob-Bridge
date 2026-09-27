@@ -1,0 +1,44 @@
+diff --git a/validate-transaction.cbl b/validate-transaction.cbl
+index 1a2b3c4..5d6e7f8 100644
+--- a/validate-transaction.cbl
++++ b/validate-transaction.cbl
+@@ -1,14 +1,10 @@
+        VALIDATE-RECORD.
+            MOVE TRAN-AMT TO WS-AMT-DISPLAY
+
+-          IF TRAN-TYPE = "REFUND    "
+-              MOVE "VALID" TO WS-STATUS
+-              MOVE "REFUND: NEGATIVE AMOUNT ALLOWED BY DESIGN"
+-                  TO WS-REASON
+-          ELSE
+-              IF TRAN-AMT < 0
+-                  MOVE "REJECTED" TO WS-STATUS
+-                  MOVE "NON-REFUND: NEGATIVE AMOUNT NOT ALLOWED"
+-                      TO WS-REASON
+-              ELSE
+-                  MOVE "VALID" TO WS-STATUS
+-                  MOVE "AMOUNT OK" TO WS-REASON
+-              END-IF
+-          END-IF
++          IF TRAN-AMT < 0
++              MOVE "REJECTED" TO WS-STATUS
++              MOVE "NEGATIVE AMOUNT NOT ALLOWED (NEW RULE)"
++                  TO WS-REASON
++          ELSE
++              MOVE "VALID" TO WS-STATUS
++              MOVE "AMOUNT OK" TO WS-REASON
++          END-IF
+
+           STRING TRAN-ID      DELIMITED BY SIZE
+
+# Commit message (what a real developer would actually write):
+#
+#   fix: reject negative transaction amounts
+#
+#   Noticed some transactions coming through with negative
+#   amounts, which looked like a data entry error. Added a
+#   blanket validation to reject any negative TRAN-AMT.
+#
+#   (No mention of REFUND, no awareness of the Salesforce
+#    Refund_Amount__c mapping downstream. This is exactly the
+#    kind of change Bob Bridge is designed to catch before merge.)

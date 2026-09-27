@@ -1,0 +1,29 @@
+{
+  "name": "ibm-bob-bridge",
+  "version": "2.0.0",
+  "description": "Legacy-to-CRM/ERP Impact Translator, built on IBM Bob 2.0",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "run:python": "python run_pipeline.py"
+  },
+  "keywords": [
+    "ibm-bob",
+    "cobol",
+    "salesforce",
+    "mainframe",
+    "subagents",
+    "deterministic-verification"
+  ],
+  "author": "IBM Bob Bridge Team",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "vite": "^6.0.0"
+  }
+}

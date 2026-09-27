@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IBM Bob Bridge — Legacy-to-CRM Impact Translator</title>
+  <meta name="description" content="IBM Bob 2.0 powered enterprise AI that automatically detects and proves breaking downstream changes in Salesforce/SAP caused by COBOL/RPG modifications.">
+
+  <!-- Google Fonts: IBM Plex Sans for executive look -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="navbar" id="main-nav">
+    <div class="brand-wrapper">
+      <div class="logo-container" id="app-logo">
+        <img src="bob-logo.jpg" alt="IBM Bob Bridge Logo" class="brand-logo">
+      </div>
+      <div class="brand-text">
+        <div class="brand-title">
+          <span class="brand-ibm">IBM</span>
+          <span class="brand-bob">Bob</span>
+          <span class="brand-bridge">Bridge</span>
+          <span class="brand-version">2.0</span>
+        </div>
+        <p class="brand-subtitle">Legacy-to-CRM/ERP Impact Translator</p>
+      </div>
+    </div>
+
+    <div class="nav-pills">
+      <span class="pill pill-blue">Plan Mode</span>
+      <span class="pill pill-cyan">spawn_subagent</span>
+      <span class="pill pill-green">Deterministic Verification</span>
+      <span class="pill pill-purple">MCP GitHub</span>
+    </div>
+
+    <div class="header-actions">
+      <div class="ai-status-indicator" id="ai-status-dot" title="AI Engine Status">
+        <span class="status-dot" id="status-dot-circle"></span>
+        <span class="status-label" id="status-dot-label">Connecting...</span>
+      </div>
+      <select id="pr-selector" style="height: 38px; padding: 0.35rem 0.65rem; background: var(--bg-layer-2); color: var(--text-primary); border: 1px solid var(--border-2); border-radius: var(--radius-md); font-weight: 600; font-size: 0.8rem; outline: none; cursor: pointer; margin-right: 6px;">
+        <option value="104">PR #104 — Silent Refund Drop (Critical)</option>
+        <option value="105">PR #105 — Account ID Expansion (High Schema Breach)</option>
+        <option value="106">PR #106 — Currency Exchange Precision (SOX Drift)</option>
+        <option value="107">PR #107 — Additive Audit Logging (Verified Safe)</option>
+      </select>
+      <button class="btn btn-secondary" id="config-bob-btn" style="margin-right: 8px;">
+        IBM Bob Key Config
+      </button>
+      <button class="btn btn-primary" id="trigger-bridge-btn">
+        Trigger Bob Bridge on PR #104
+      </button>
+    </div>
+  </header>
+
+  <main class="app-container">
+
+    <!-- Hero Section -->
+    <section class="hero-section" id="hero-section">
+      <div class="hero-main">
+        <div class="hero-headline">
+          <div class="hero-label">IBM BOB 2.0 — ENTERPRISE INTELLIGENCE LAYER</div>
+          <h1>Eliminate Mainframe-to-CRM<br>Silent Breakages</h1>
+          <p class="hero-desc">
+            When core COBOL/RPG logic is modified, Bob Bridge automatically translates downstream impact into plain English for Salesforce and SAP administrators — with deterministic execution proof before code merges.
+          </p>
+        </div>
+
+        <div class="metrics-strip">
+          <div class="metric-item">
+            <div class="metric-value text-green" id="stat-detection-time">&lt; 2 min</div>
+            <div class="metric-label">Detection Latency</div>
+            <div class="metric-sub">Down from days of meetings</div>
+          </div>
+          <div class="metric-divider"></div>
+          <div class="metric-item">
+            <div class="metric-value text-cyan">80%</div>
+            <div class="metric-label">Banking Volume</div>
+            <div class="metric-sub">Still runs on COBOL mainframes</div>
+          </div>
+          <div class="metric-divider"></div>
+          <div class="metric-item">
+            <div class="metric-value text-white">Deterministic</div>
+            <div class="metric-label">Verification Type</div>
+            <div class="metric-sub">Code execution, not AI guessing</div>
+          </div>
+          <div class="metric-divider"></div>
+          <div class="metric-item">
+            <div class="metric-value text-red" id="stat-overall-status">SILENT BREAK</div>
+            <div class="metric-label">PR #104 Status</div>
+            <div class="metric-sub"><span id="stat-broken-count">3</span> refunds dropped</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PR Context Card -->
+      <div class="pr-context-card" id="pr-card">
+        <div class="pr-card-header">
+          <div class="pr-card-title-row">
+            <div class="pr-number-badge" id="pr-badge-num">PR #104</div>
+            <div class="pr-branch-info">
+              <span class="pr-title-text" id="pr-title-text">fix: reject negative transaction amounts</span>
+              <span class="pr-branch" id="pr-branch-text">fix/negative-amounts &rarr; main</span>
+            </div>
+          </div>
+          <span class="file-badge" id="pr-file-badge">VALIDATE-TRANSACTION.cbl</span>
+        </div>
+
+        <p class="pr-context-desc" id="pr-desc-text">
+          A developer added a blanket rule to reject negative transaction amounts, assuming it was a data entry error — with no awareness of the downstream Salesforce Refund flow.
+        </p>
+
+        <div class="diff-viewer">
+          <div class="diff-header">
+            <span class="diff-filename" id="pr-diff-filename">validate-transaction.cbl</span>
+            <span class="diff-range" id="pr-diff-range">@@ -9,14 +23,8 @@ VALIDATE-RECORD</span>
+          </div>
+          <div class="diff-body" id="pr-diff-body">
+            <div class="diff-line diff-del"><span class="diff-marker">-</span>  IF TRAN-TYPE = "REFUND    "</div>
+            <div class="diff-line diff-del"><span class="diff-marker">-</span>      MOVE "VALID" TO WS-STATUS</div>
+            <div class="diff-line diff-add"><span class="diff-marker">+</span>  IF TRAN-AMT &lt; 0</div>
+            <div class="diff-line diff-add"><span class="diff-marker">+</span>      MOVE "REJECTED" TO WS-STATUS</div>
+          </div>
+        </div>
+
+        <div class="pr-card-actions">
+          <button class="btn btn-ghost btn-sm" id="reset-btn">Reset Simulation</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Navigation Tabs -->
+    <nav class="tab-nav" id="main-tabs" aria-label="Application Views">
+      <button class="tab-btn active" data-tab="tab-orchestrator" id="btn-tab-orch">
+        Live Orchestrator
+      </button>
+      <button class="tab-btn" data-tab="tab-proof" id="btn-tab-proof">
+        Verified Impact Proof
+      </button>
+      <button class="tab-btn" data-tab="tab-pr-comment" id="btn-tab-pr">
+        GitHub PR Report
+      </button>
+      <button class="tab-btn" data-tab="tab-glossary" id="btn-tab-glossary">
+        Living Glossary
+        <span class="tab-badge" id="tab-glossary-badge">3</span>
+      </button>
+      <button class="tab-btn" data-tab="tab-simulator" id="btn-tab-sim">
+        What-If Simulator
+      </button>
+      <button class="tab-btn" data-tab="tab-architecture" id="btn-tab-arch">
+        Architecture &amp; Metrics
+      </button>
+    </nav>
+
+    <!-- TAB 1: Live Orchestrator -->
+    <section class="tab-content active" id="tab-orchestrator">
+      <div class="orchestrator-layout">
+
+        <!-- Left: Bob 2.0 Execution Steps -->
+        <aside class="execution-sidebar" id="phase-stepper">
+          <div class="sidebar-label">Bob 2.0 Execution Flow</div>
+
+          <div class="exec-step" id="step-1">
+            <div class="step-connector"></div>
+            <div class="step-marker">
+              <span class="step-num">01</span>
+            </div>
+            <div class="step-body">
+              <div class="step-title-row">
+                <span class="step-name">Plan Mode Ingestion</span>
+                <span class="step-status" id="step-1-status">Idle</span>
+              </div>
+              <p class="step-desc">Parses incoming diff and identifies affected AST variables and blast-radius candidates.</p>
+            </div>
+          </div>
+
+          <div class="exec-step" id="step-2">
+            <div class="step-connector"></div>
+            <div class="step-marker">
+              <span class="step-num">02</span>
+            </div>
+            <div class="step-body">
+              <div class="step-title-row">
+                <span class="step-name">Document Understanding</span>
+                <span class="step-status" id="step-2-status">Idle</span>
+              </div>
+              <p class="step-desc">Reads COBOL copybook structure and App Connect integration mapping JSON.</p>
+            </div>
+          </div>
+
+          <div class="exec-step" id="step-3">
+            <div class="step-connector"></div>
+            <div class="step-marker">
+              <span class="step-num">03</span>
+            </div>
+            <div class="step-body">
+              <div class="step-title-row">
+                <span class="step-name">Parallel Subagent Fan-out</span>
+                <span class="step-status" id="step-3-status">Idle</span>
+              </div>
+              <p class="step-desc">Spawns 5 specialized subagents via spawn_subagent in parallel.</p>
+            </div>
+          </div>
+
+          <div class="exec-step" id="step-4">
+            <div class="step-connector"></div>
+            <div class="step-marker">
+              <span class="step-num">04</span>
+            </div>
+            <div class="step-body">
+              <div class="step-title-row">
+                <span class="step-name">Deterministic Verification</span>
+                <span class="step-status" id="step-4-status">Idle</span>
+              </div>
+              <p class="step-desc">Runs test data against before/after COBOL binaries. Proves the break, does not guess.</p>
+            </div>
+          </div>
+
+          <div class="exec-step" id="step-5">
+            <div class="step-connector"></div>
+            <div class="step-marker">
+              <span class="step-num">05</span>
+            </div>
+            <div class="step-body">
+              <div class="step-title-row">
+                <span class="step-name">MCP Report &amp; Glossary</span>
+                <span class="step-status" id="step-5-status">Idle</span>
+              </div>
+              <p class="step-desc">Posts PR review via GitHub MCP and mints new Living Glossary entries.</p>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Right: Subagent Cluster + Terminal -->
+        <div class="orchestrator-main">
+          <div class="subagent-cluster-header">
+            <h3 class="section-title">Parallel Subagent Cluster</h3>
+            <span class="pill pill-cyan">spawn_subagent — 5 Concurrent Agents</span>
+          </div>
+
+          <div class="subagents-grid" id="subagents-grid">
+            <!-- Rendered by app.js -->
+          </div>
+
+          <!-- AI Analysis Result Panel (shown after run) -->
+          <div class="ai-analysis-panel" id="ai-analysis-panel" style="display:none;">
+            <div class="ai-panel-header">
+              <div class="ai-panel-title">Bob 2.0 Plan Mode Analysis</div>
+              <span class="pill pill-blue" id="ai-risk-pill">Risk: —</span>
+            </div>
+            <div class="ai-panel-body" id="ai-plan-body">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- Terminal Log Stream -->
+          <div class="terminal-window">
+            <div class="terminal-title-bar">
+              <div class="terminal-dots">
+                <span class="tdot red"></span>
+                <span class="tdot yellow"></span>
+                <span class="tdot green"></span>
+              </div>
+              <span class="terminal-title">bob-bridge-orchestrator — event stream</span>
+              <span class="pill" style="font-size:0.6rem; padding: 0.1rem 0.5rem;">LIVE</span>
+            </div>
+            <div class="terminal-body" id="terminal-logs">
+              <!-- Log lines -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: Verified Impact Proof -->
+    <section class="tab-content" id="tab-proof">
+
+      <!-- Pipeline Flow Diagram -->
+      <div class="pipeline-flow-card">
+        <div class="card-header-row">
+          <h3 class="section-title">Deterministic Mainframe-to-Salesforce Pipeline</h3>
+          <span class="pill pill-blue">App Connect Flow: CoreBanking_To_Salesforce_Refund_Sync</span>
+        </div>
+
+        <div class="pipeline-flow">
+          <div class="flow-node">
+            <div class="flow-node-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M7 3v18M12 3v18M17 3v18"/></svg>
+            </div>
+            <div class="flow-node-title">Mainframe Data</div>
+            <div class="flow-node-sub">transactions.dat</div>
+          </div>
+          <div class="flow-arrow">&#8594;</div>
+          <div class="flow-node">
+            <div class="flow-node-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            </div>
+            <div class="flow-node-title">COBOL Core</div>
+            <div class="flow-node-sub">VALIDATE-TRANSACTION.cbl</div>
+          </div>
+          <div class="flow-arrow">&#8594;</div>
+          <div class="flow-node flow-node-break">
+            <div class="flow-node-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            </div>
+            <div class="flow-node-title">Silent Drop Point</div>
+            <div class="flow-node-sub">STATUS: REJECTED</div>
+          </div>
+          <div class="flow-arrow">&#8594;</div>
+          <div class="flow-node">
+            <div class="flow-node-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            </div>
+            <div class="flow-node-title">App Connect</div>
+            <div class="flow-node-sub">Filter: STATUS = VALID</div>
+          </div>
+          <div class="flow-arrow">&#8594;</div>
+          <div class="flow-node">
+            <div class="flow-node-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+            </div>
+            <div class="flow-node-title">Salesforce Cloud</div>
+            <div class="flow-node-sub">Refund__c Record</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Verification Summary Banner -->
+      <div id="proof-summary-banner" class="proof-banner"></div>
+
+      <!-- Before vs After Comparison -->
+      <div class="comparison-grid">
+        <div class="comparison-panel panel-pass">
+          <div class="comparison-panel-header">
+            <div class="comparison-panel-title">
+              <svg class="icon-pass" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              BEFORE Fix — Expected Production Behavior
+            </div>
+            <span class="pill pill-green">3 Refunds Land in CRM</span>
+          </div>
+          <table class="data-table" id="before-receipt-table">
+            <thead>
+              <tr>
+                <th>Txn ID</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Core Status</th>
+                <th>Salesforce Refund__c</th>
+              </tr>
+            </thead>
+            <tbody id="before-table-body">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="comparison-panel panel-fail">
+          <div class="comparison-panel-header">
+            <div class="comparison-panel-title">
+              <svg class="icon-fail" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              AFTER Fix — Broken Production Behavior
+            </div>
+            <span class="pill pill-red">0 Refunds Land (Broken)</span>
+          </div>
+          <table class="data-table" id="after-receipt-table">
+            <thead>
+              <tr>
+                <th>Txn ID</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Core Status</th>
+                <th>Salesforce Refund__c</th>
+              </tr>
+            </thead>
+            <tbody id="after-table-body">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: GitHub PR Report -->
+    <section class="tab-content" id="tab-pr-comment">
+      <div class="pr-report-shell" id="pr-comment-preview">
+        <div class="pr-report-header">
+          <div class="pr-report-meta">
+            <div class="bot-avatar">
+              <img src="bob-logo.jpg" alt="IBM Bob" class="bot-avatar-img">
+            </div>
+            <div>
+              <div class="bot-name">ibm-bob-bridge[bot]</div>
+              <div class="bot-sub">commented on PR #104 via GitHub MCP Server</div>
+              <div class="bot-hash">Verification Hash: #cbl-det-<span id="verify-hash">loading...</span></div>
+            </div>
+          </div>
+          <span class="pill pill-blue">Automated PR Analysis</span>
+        </div>
+
+        <div class="pr-report-body" id="pr-report-content">
+          <div class="pr-alert-critical">
+            <div class="pr-alert-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <div>
+              <div class="pr-alert-title" id="pr-alert-headline">CRITICAL BREAKAGE DETECTED: 3 Customer Refunds Dropped Silently</div>
+              <p class="pr-alert-desc" id="pr-alert-desc">
+                This PR introduces a blanket negative amount rejection in <code>VALIDATE-TRANSACTION.cbl</code>. While intended to prevent entry errors, it breaks the core business rule for <code>TRAN-TYPE = 'REFUND'</code>.
+              </p>
+            </div>
+          </div>
+
+          <div class="pr-section">
+            <div class="pr-section-title">Plain-English Impact — For Salesforce / SAP Administrators</div>
+            <p class="pr-section-text" id="pr-plain-english">
+              This change will stop all customer refunds from reaching Salesforce. Nothing will error in your system — refund requests will simply disappear before they reach your queue, because IBM App Connect only forwards transactions with STATUS = 'VALID'. Customers will never receive their refunds, and support agents will see no record.
+            </p>
+          </div>
+
+          <div class="pr-section">
+            <div class="pr-section-title">Technical Root Cause — For Mainframe / COBOL Engineers</div>
+            <div class="code-block" id="pr-technical-block">
+              <div>File: <code>validate-transaction.cbl</code> lines 23-30</div>
+              <div class="code-del">- Deleted: Branch allowing TRAN-AMT &lt; 0 when TRAN-TYPE = "REFUND    "</div>
+              <div class="code-add">+ Added: Blanket rejection: IF TRAN-AMT &lt; 0 MOVE "REJECTED" TO WS-STATUS</div>
+              <div class="code-note">Copybook Spec: TRAN-AMT PIC S9(6)V99 SIGN LEADING SEPARATE explicitly supports signed negative values.</div>
+            </div>
+          </div>
+
+          <div class="pr-section">
+            <div class="pr-section-title">Compliance &amp; PII Audit Checklist</div>
+            <div class="compliance-list" id="pr-compliance-list">
+              <div class="compliance-item compliance-pass">
+                <svg class="compliance-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <div>
+                  <strong>Synthetic Test Data Guarantee:</strong> Verified 100% synthetic records used. Zero customer PII or PAN data exposed.
+                </div>
+              </div>
+              <div class="compliance-item compliance-pass">
+                <svg class="compliance-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <div>
+                  <strong>PCI-DSS Req 3.4 &amp; GLBA:</strong> Field <code>TRAN-AMT</code> correctly tagged as financial transaction balance.
+                </div>
+              </div>
+              <div class="compliance-item compliance-warn">
+                <svg class="compliance-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>
+                <div>
+                  <strong>SOX Section 404 Internal Controls:</strong> Downstream discrepancy will cause general ledger imbalance between DDA and Salesforce.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pr-section">
+            <div class="pr-section-title">Bob Bridge Recommended Fix</div>
+            <div class="recommended-fix-block" id="pr-recommended-fix">
+              <div class="code-add">+ IF TRAN-TYPE = "REFUND"</div>
+              <div class="code-add">+     NEXT SENTENCE</div>
+              <div class="code-add">+ ELSE IF TRAN-AMT &lt; 0</div>
+              <div class="code-add">+     MOVE "REJECTED" TO WS-STATUS</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: Living Business-Rule Glossary -->
+    <section class="tab-content" id="tab-glossary">
+      <div class="glossary-header">
+        <div>
+          <h2 class="section-title">Living Business-Rule Glossary</h2>
+          <p class="section-desc">
+            Preserving vanishing mainframe tribal knowledge. Every Bob Bridge analysis permanently indexes domain rules and downstream impact into this searchable repository.
+          </p>
+        </div>
+        <button class="btn btn-primary btn-sm" id="btn-add-glossary">
+          Generate AI Entry
+        </button>
+      </div>
+
+      <div class="glossary-controls">
+        <div class="search-wrapper">
+          <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" class="search-input" id="glossary-search" placeholder="Search by field, system, regulation...">
+        </div>
+
+        <div class="filter-strip">
+          <button class="filter-btn active" data-filter="all" id="filter-all">All Rules</button>
+          <button class="filter-btn" data-filter="salesforce" id="filter-sf">Salesforce</button>
+          <button class="filter-btn" data-filter="sap" id="filter-sap">SAP S/4HANA</button>
+          <button class="filter-btn" data-filter="compliance" id="filter-comp">Regulated / PII</button>
+        </div>
+
+        <span class="pill pill-blue" id="glossary-count-badge">3 Rules</span>
+      </div>
+
+      <div class="glossary-grid" id="glossary-cards-container">
+        <!-- Rendered by app.js -->
+      </div>
+
+      <!-- AI Glossary Generation Modal -->
+      <div class="modal-overlay" id="glossary-modal">
+        <div class="modal-box">
+          <div class="modal-header">
+            <div class="modal-title">Generate AI Glossary Entry</div>
+            <button class="modal-close" id="glossary-modal-close">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label class="form-label">COBOL Field Name</label>
+              <input type="text" class="form-input" id="modal-field" placeholder="e.g. WS-STATUS">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Program</label>
+              <input type="text" class="form-input" id="modal-program" value="VALIDATE-TRANSACTION.cbl">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Trigger / Context</label>
+              <textarea class="form-input" id="modal-trigger" rows="3" placeholder="What triggered this analysis?"></textarea>
+            </div>
+            <button class="btn btn-primary" id="btn-generate-entry" style="width:100%;">
+              Generate with Bob 2.0 AI
+            </button>
+            <div id="modal-generating" style="display:none; text-align:center; margin-top:1rem; color: var(--text-muted); font-size:0.85rem;">
+              Bob 2.0 is analyzing the field...
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: What-If Simulator -->
+    <section class="tab-content" id="tab-simulator">
+      <div class="simulator-card">
+        <div class="card-header-row">
+          <div>
+            <h2 class="section-title">Interactive What-If Simulator</h2>
+            <p class="section-desc">Test arbitrary transaction payloads against COBOL logic before and after the fix. Bob Bridge AI provides full downstream analysis for each scenario.</p>
+          </div>
+        </div>
+
+        <form id="whatif-form" class="simulator-form">
+          <div class="form-group">
+            <label class="form-label" for="sim-id">Transaction ID</label>
+            <input type="text" id="sim-id" class="form-input" value="TXN888" maxlength="6">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="sim-type">Transaction Type</label>
+            <select id="sim-type" class="form-input">
+              <option value="REFUND">REFUND — Customer Credit</option>
+              <option value="PURCHASE">PURCHASE — Standard Debit</option>
+              <option value="FEE">FEE — Account Maintenance</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="sim-amt">Signed Amount ($)</label>
+            <input type="number" id="sim-amt" class="form-input" step="0.01" value="-175.50">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="sim-rule">Rule Set</label>
+            <select id="sim-rule" class="form-input">
+              <option value="after">PR #104 — Flawed Blanket Rejection</option>
+              <option value="before">Baseline — Allow Refund Negative</option>
+              <option value="recommended_fix">Bob Bridge Suggested Fix</option>
+            </select>
+          </div>
+          <div class="form-group form-group-submit">
+            <label class="form-label">&nbsp;</label>
+            <button type="submit" class="btn btn-primary" id="btn-run-sim">
+              Run Analysis
+            </button>
+          </div>
+        </form>
+
+        <div id="whatif-result-box" style="display: none; margin-top: 1.5rem;"></div>
+      </div>
+    </section>
+
+    <!-- TAB 6: Architecture & Metrics -->
+    <section class="tab-content" id="tab-architecture">
+      <div class="arch-grid">
+
+        <!-- Bob 2.0 Feature Mapping -->
+        <div class="arch-card">
+          <div class="arch-card-header">
+            <div class="arch-card-label">IBM BOB 2.0 PRIMITIVES</div>
+            <h3 class="arch-card-title">Feature Utilization Map</h3>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Bob 2.0 Primitive</th>
+                <th>Bob Bridge Implementation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="cell-accent">Plan Mode</td>
+                <td>Ingests git diff PR #104, structures changed variables and candidate blast radius before spawning subagents.</td>
+              </tr>
+              <tr>
+                <td class="cell-accent">Document Understanding</td>
+                <td>Ingests COBOL copybook AST (PIC S9(6)V99) and App Connect integration JSON contracts directly.</td>
+              </tr>
+              <tr>
+                <td class="cell-accent">spawn_subagent</td>
+                <td>Fans out to 5 parallel subagents with specialized domain responsibilities, running concurrently.</td>
+              </tr>
+              <tr>
+                <td class="cell-accent">Hybrid Workflows</td>
+                <td>Executes deterministic verification (run_pipeline.py) to prove the break with real execution data.</td>
+              </tr>
+              <tr>
+                <td class="cell-accent">MCP Integration</td>
+                <td>Posts formatted impact reports directly to GitHub PR comments via MCP GitHub server connector.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Business Impact Scorecard -->
+        <div class="arch-card">
+          <div class="arch-card-header">
+            <div class="arch-card-label">BUSINESS IMPACT</div>
+            <h3 class="arch-card-title">Before &amp; After Scorecard</h3>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th>Legacy Process</th>
+                <th>With Bob Bridge</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Time to Detect</strong></td>
+                <td class="cell-fail">Days (Meetings / Tickets)</td>
+                <td class="cell-pass">Under 2 minutes (Automated)</td>
+              </tr>
+              <tr>
+                <td><strong>Audience</strong></td>
+                <td>Only bilingual mainframe staff</td>
+                <td class="cell-pass">Any Salesforce admin or COBOL dev</td>
+              </tr>
+              <tr>
+                <td><strong>Knowledge Retention</strong></td>
+                <td>Lost in retirements</td>
+                <td class="cell-pass">Living Business-Rule Glossary</td>
+              </tr>
+              <tr>
+                <td><strong>Compliance Review</strong></td>
+                <td>Manual, error-prone sampling</td>
+                <td class="cell-pass">Automated gate on every PR</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Architecture Diagram -->
+        <div class="arch-card arch-card-full">
+          <div class="arch-card-header">
+            <div class="arch-card-label">SYSTEM ARCHITECTURE</div>
+            <h3 class="arch-card-title">Bob 2.0 Agent Orchestration Topology</h3>
+          </div>
+          <div class="arch-diagram">
+            <div class="arch-node arch-node-primary">
+              <div class="arch-node-label">Legacy Change Input</div>
+              <div class="arch-node-sub">COBOL/RPG diff, copybook, DDS</div>
+            </div>
+            <div class="arch-arrow-down">&#8595;</div>
+            <div class="arch-node arch-node-primary">
+              <div class="arch-node-label">Bob 2.0 — Plan Mode</div>
+              <div class="arch-node-sub">Parses change, reads integration doc</div>
+            </div>
+            <div class="arch-fan">
+              <div class="arch-fan-label">spawn_subagent (parallel)</div>
+              <div class="arch-fan-agents">
+                <div class="arch-agent-node">Legacy Call-Graph Agent</div>
+                <div class="arch-agent-node">Integration Mapping Agent</div>
+                <div class="arch-agent-node">Business Translation Agent</div>
+                <div class="arch-agent-node">Test-Data Generation Agent</div>
+                <div class="arch-agent-node arch-agent-p1">Compliance / PII Flag Agent</div>
+              </div>
+            </div>
+            <div class="arch-arrow-down">&#8595;</div>
+            <div class="arch-node arch-node-secondary">
+              <div class="arch-node-label">Deterministic Workflow</div>
+              <div class="arch-node-sub">Run mapping with sample data — before-fix vs after-fix</div>
+            </div>
+            <div class="arch-arrow-down">&#8595;</div>
+            <div class="arch-node arch-node-output">
+              <div class="arch-node-label">Unified Report via MCP + Living Glossary</div>
+              <div class="arch-node-sub">PR comment &rarr; GitHub MCP &rarr; Knowledge Base</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- IBM Bob Credentials Config Modal -->
+  <div class="modal-overlay" id="bob-config-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title">IBM Bob 2.0 AI Credentials Configuration</div>
+        <button class="modal-close" id="close-bob-config-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="color: var(--text-secondary); font-size: 0.82rem; line-height: 1.45;">
+          Configure your IBM Bob 2.0 / IBM watsonx AI API credentials. Settings are persisted to your <code>.env</code> file.
+        </p>
+        <div class="form-group">
+          <label class="form-label" for="cfg-api-key">IBM Bob / watsonx API Key</label>
+          <input type="password" id="cfg-api-key" class="form-input" placeholder="Paste your IBM Cloud IAM API Key">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="cfg-endpoint">Endpoint URL</label>
+          <input type="text" id="cfg-endpoint" class="form-input" placeholder="https://us-south.ml.cloud.ibm.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="cfg-project-id">IBM watsonx Project ID (Optional)</label>
+          <input type="text" id="cfg-project-id" class="form-input" placeholder="e.g. 12345678-abcd-1234-abcd-1234567890ab">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="cfg-model-id">Model ID</label>
+          <input type="text" id="cfg-model-id" class="form-input" placeholder="ibm/granite-3-8b-instruct">
+        </div>
+        <div id="cfg-status-msg" style="margin-top: 0.5rem; font-size: 0.8rem; font-weight: 500;"></div>
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 0.75rem;">
+          <button class="btn btn-secondary" id="cancel-bob-config-btn">Cancel</button>
+          <button class="btn btn-primary" id="save-bob-config-btn">Save Configuration</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

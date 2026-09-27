@@ -1,0 +1,65 @@
+[
+  {
+    "id": "RULE-GLOSS-001",
+    "field": "TRAN-AMT",
+    "program": "VALIDATE-TRANSACTION.cbl",
+    "subsystem": "CORE-BANKING-DDA",
+    "business_meaning": "Transaction Amount sign convention: Negative values represent outbound disbursements or credits to the customer (Refunds). Positive values denote inbound receipts or debits (Purchases, Fees).",
+    "downstream_systems": [
+      {
+        "system": "Salesforce Financial Services Cloud",
+        "target_field": "Refund_Amount__c",
+        "object": "Refund__c",
+        "impact_note": "Salesforce automation 'Process Refund' triggers strictly when Refund_Amount__c < 0. Positive values get flagged as invoice credits."
+      },
+      {
+        "system": "SAP S/4HANA Finance",
+        "target_field": "WRBTR (Credit/Debit Indicator SHKZG)",
+        "object": "BSEG",
+        "impact_note": "Maps negative amount directly to Posting Key 40 (Debit) or 50 (Credit) according to document type KR."
+      }
+    ],
+    "compliance_tags": ["PCI-DSS Req 3.4", "GLBA", "SOX Sec 404"],
+    "linked_commit": "c49a812 (feat: initial refund integration mapping)",
+    "last_updated": "2026-09-20T10:15:00Z",
+    "author": "Legacy Core Systems Architecture"
+  },
+  {
+    "id": "RULE-GLOSS-002",
+    "field": "TRAN-TYPE",
+    "program": "VALIDATE-TRANSACTION.cbl",
+    "subsystem": "CORE-BANKING-DDA",
+    "business_meaning": "Fixed 10-byte alphanumeric classification tag. 'REFUND    ' is an authorized debit override that bypasses general overdraft validation.",
+    "downstream_systems": [
+      {
+        "system": "Salesforce Service Cloud",
+        "target_field": "RecordTypeId",
+        "object": "Case / Refund__c",
+        "impact_note": "Controls lightning page layouts and SLA routing queues for VIP Dispute Teams."
+      }
+    ],
+    "compliance_tags": ["Banking Operations Rule 12B"],
+    "linked_commit": "8f12d4a (chore: align record types)",
+    "last_updated": "2026-09-22T14:30:00Z",
+    "author": "Payments Integration Lead"
+  },
+  {
+    "id": "RULE-GLOSS-003",
+    "field": "TRAN-ID",
+    "program": "VALIDATE-TRANSACTION.cbl",
+    "subsystem": "CORE-BANKING-DDA",
+    "business_meaning": "Global 6-byte hexadecimal unique transaction token. Formed by sequence prefix + checksum.",
+    "downstream_systems": [
+      {
+        "system": "Salesforce / SAP",
+        "target_field": "Core_Transaction_Id__c / XBLNR",
+        "object": "External Identifier",
+        "impact_note": "Used for idempotent reconciliation and duplicate payment suppression."
+      }
+    ],
+    "compliance_tags": ["Audit Trail ISO 20022"],
+    "linked_commit": "1a3e99c (init: core transaction schema)",
+    "last_updated": "2026-09-15T09:00:00Z",
+    "author": "Mainframe Tech Lead"
+  }
+]
